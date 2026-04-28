@@ -477,10 +477,36 @@ export default function CleaningTwoWorkspaces() {
   );
 }
 
-function LoginScreen({ username, setUsername, password, setPassword, login, loginError, isOnline }) { return <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4"><div className="w-full max-w-md"><Card className="rounded-2xl shadow-lg"><CardContent className="p-6 space-y-5"><div className="text-center space-y-2"><div className="mx-auto h-14 w-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl">🧹</div><h1 className="text-2xl font-bold">SithonBreak Cleaning System</h1><p className="text-sm text-slate-500">4 μονάδες πελάτη + δικά μου καταλύματα</p></div><div className="space-y-3"><input className="w-full rounded-xl border p-3" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" /><input className="w-full rounded-xl border p-3" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" onKeyDown={(e) => e.key === "Enter" && login()} />{loginError && <div className="rounded-xl bg-red-50 p-3 text-sm font-medium text-red-700">{loginError}</div>}<Button onClick={login} className="w-full rounded-xl py-6">Είσοδος</Button></div><div className="rounded-xl bg-slate-100 p-3 text-sm text-slate-600">
-<div><b>Σύνδεση μόνο με προσωπικούς κωδικούς.</b></div>
-<div className="text-xs mt-1">(Οι κωδικοί δεν εμφανίζονται για λόγους ασφάλειας)</div>
-</div><div><b>Πελάτης 4 μονάδων:</b> client / client2026</div><div><b>Δικά σου:</b> sithon / sithon2026</div><div><b>Καθαρίστριες:</b> vrachos, inlofts, theros, okkio / αντίστοιχο 2026</div><div><b>Κατάσταση:</b> {isOnline ? "Online" : "Offline mode"}</div></div></CardContent></Card></div></div>; }
+function LoginScreen({ username, setUsername, password, setPassword, login, loginError, isOnline }) {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <Card className="rounded-2xl shadow-lg">
+          <CardContent className="p-6 space-y-5">
+            <div className="text-center space-y-2">
+              <div className="mx-auto h-14 w-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl">🧹</div>
+              <h1 className="text-2xl font-bold">SithonBreak Cleaning System</h1>
+              <p className="text-sm text-slate-500">4 μονάδες πελάτη + δικά μου καταλύματα</p>
+            </div>
+
+            <div className="space-y-3">
+              <input className="w-full rounded-xl border p-3" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+              <input className="w-full rounded-xl border p-3" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" onKeyDown={(e) => e.key === "Enter" && login()} />
+              {loginError && <div className="rounded-xl bg-red-50 p-3 text-sm font-medium text-red-700">{loginError}</div>}
+              <Button onClick={login} className="w-full rounded-xl py-6">Είσοδος</Button>
+            </div>
+
+            <div className="rounded-xl bg-slate-100 p-3 text-sm text-slate-600">
+              <div><b>Σύνδεση μόνο με προσωπικούς κωδικούς.</b></div>
+              <div className="text-xs mt-1">Οι κωδικοί δεν εμφανίζονται για λόγους ασφάλειας.</div>
+              <div className="text-xs mt-1">Κατάσταση: {isOnline ? "Online" : "Offline mode"}</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
 
 function UploadPanel({ workspace, user, simulateExcelUpload, handleExcelFile, isUploading, resetDemo, selectedUploadProperty, setSelectedUploadProperty }) {
   const canChooseUnitExcel = workspace.id === "units" && (user.role === "admin" || user.role === "client");
@@ -516,4 +542,3 @@ function HeavyDaysView({ heavyDays, workspace }) { if (!heavyDays.length) return
 function LinenStockView({ workspace, linenStock, washLinen }) { return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{workspace.properties.map((p) => { const stock = linenStock[p.id]; const status = stockStatus(stock); return <Card key={p.id} className="rounded-2xl shadow-sm"><CardContent className="p-5 space-y-4"><div className="flex justify-between"><div><div className="text-xl font-bold">{p.name}</div><div className="text-sm text-slate-500">Όριο: {stock?.minimum}</div></div><div className={`rounded-full px-3 py-1 text-sm font-semibold ${status === "low" ? "bg-red-100 text-red-700" : status === "warning" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}>{status === "low" ? "Χαμηλό" : status === "warning" ? "Προσοχή" : "ΟΚ"}</div></div><div className="grid grid-cols-2 gap-3"><div className="rounded-xl bg-slate-100 p-4"><div className="text-sm text-slate-500">Καθαρά</div><div className="text-3xl font-bold">{stock?.cleanSets}</div></div><div className="rounded-xl bg-slate-100 p-4"><div className="text-sm text-slate-500">Για πλύσιμο</div><div className="text-3xl font-bold">{stock?.usedSets}</div></div></div><Button variant="outline" className="rounded-xl w-full" onClick={() => washLinen(p.id)}>Καταχώρηση πλυσίματος</Button></CardContent></Card>; })}</div>; }
 function ReportsView({ reports, tasks, workspace }) { const totals = getStats(tasks); const heavyDays = getHeavyDays(tasks, workspace); return <div className="space-y-4"><div className="grid grid-cols-1 md:grid-cols-4 gap-3"><Stat icon="📊" title="Σύνολο" value={totals.total} /><Stat icon="✅" title="Έγιναν" value={totals.done} /><Stat icon="⚠️" title="Ίδια μέρα" value={totals.urgent} /><Stat icon="🔥" title="Βαριές" value={heavyDays.length} /></div><Card className="rounded-2xl shadow-sm overflow-hidden"><CardContent className="p-0"><div className="p-4 border-b bg-white"><div className="text-xl font-bold">Αναφορά</div></div><div className="overflow-x-auto"><table className="w-full text-sm"><thead className="bg-slate-100 text-slate-600"><tr><th className="text-left p-3">Όνομα</th><th className="text-left p-3">Περιοχή</th><th className="text-center p-3">Εργασίες</th>{workspace.hasLinen && <th className="text-center p-3">Σεντόνια</th>}<th className="text-center p-3">Ίδια μέρα</th><th className="text-center p-3">%</th></tr></thead><tbody className="divide-y">{reports.map((r) => <tr key={r.propertyId}><td className="p-3 font-semibold">{r.propertyName}</td><td className="p-3">{r.area}</td><td className="p-3 text-center">{r.total}</td>{workspace.hasLinen && <td className="p-3 text-center">{r.linen}</td>}<td className="p-3 text-center">{r.urgent}</td><td className="p-3 text-center font-semibold">{r.completion}%</td></tr>)}</tbody></table></div></CardContent></Card></div>; }
 function Stat({ icon, title, value }) { return <Card className="rounded-2xl shadow-sm"><CardContent className="p-4 flex items-center gap-3"><div className="h-11 w-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl">{icon}</div><div><div className="text-sm text-slate-500">{title}</div><div className="text-2xl font-bold">{value}</div></div></CardContent></Card>; }
-
